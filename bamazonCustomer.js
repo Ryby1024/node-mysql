@@ -16,68 +16,66 @@ var connection = mysql.createConnection({
 
 connection.connect(function(err) {
   if (err) throw err;
+  display();
   userBuy();
-  connection.end();
+  
 });
 
-
+function display(){
+    connection.query("SELECT * FROM products", function(err, results) {
+        if (err) throw err;
+   
+   var choiceArray = [];
+   for(let i = 0; i < results.length; i++ ){
+       choiceArray.push("\n" +"Item ID: " + results[i].item_id + " "+ "Item Name: " + results[i].product_name + " "+ "Item Price: " + results[i].price);
+   }
+   console.log(choiceArray.toString());
+})
+}
 
 function userBuy() {
-  connection.query("SELECT * FROM products", function(err, results) {
-    if (err) throw err;
 
     inquirer.prompt([
         {
         name: "choice",
-        type: "rawlist",
-        choices: function(){
-            var choiceArray = [];
-            for(let i = 0; i < results.length; i++ ){
-                choiceArray.push("\n" +"Item ID: " + results[i].item_id + " "+ "Item Name: " + results[i].product_name + " "+ "Item Price: " + results[i].price);
-            }
-            return choiceArray;
-        },
-        message: "What is the item ID of the item you would like to purchase?"
-    },
-    {
-        name: "quantity",
         type: "input",
-        message: "How many would you like to buy?"
-    }
+        message: "What is the item ID of the item you would like to purchase?"
+        }
     ]).then(function(answer){
-        let chosenItem;
-        for(let j = 0; j < results.length; j++){
-            if(results[j].item_id === answer.choice){
-                chosenItem = results[j];
+        let selection = answer.choice;
+        connection.query("SELECT * FROM products WHERE item_id=?", selection,  function(err, results) {
+            if(err) throw err;
+            if(results.length === 0){
+                console.log("That item does not exist. Please select an item ID from the options given");
+                userBuy();
+            }else{
+                inquirer.prompt({
+                    name: "quantity",
+                    type: "input",
+                    message: "How many would you like to purchase?"
+                }).then(function(answer1){
+                    let quantity = answer1.quantity;
+                    if(quantity > results[0].stock_quantity){
+                        console.log("We are sorry, supplies are limited. Please try again.");
+                        userBuy();
+                    }else{
+                        console.log("");
+                        console.log(results[0].product_name + " purchased.");
+                        console.log("Your total is " + parseInt(answer1.quantity) * parseInt(answer1.price))
 
+                        let newTotalItems = results[0].stock_quantity - quantity;
+                        connection.query("UPDATE products SET stock_quantity=? " + newTotalItems + "WHERE item_id=? " + results[0].item_id,
+                        function(err, resUpdate){
+                            if(err) throw err;
+                            console.log("Your order has been processed")
+                            connection.end();
+                        })
+
+                       
+                    }
+                })
             }
-
-        }
-        if(chosenItem.stock_quantity > parseInt(answer.quantity)){
-            connection.query(
-                "UPDATE products SET ? WHERE ?",
-                [
-                {
-                    stock_quantity: stock_quantity - answer.quantity
-                },
-                {
-                    item_id: chosenItem.item_id
-                }
-
-                ],
-                function(error){
-                    if(error) throw err;
-                    console.log("Purchase was successful! Your total is " + answer.quantity * answer.price);
-                    userBuy();
-
-                    
-                }
-            );
-
-        }else{
-            console.log("Not enough supply. Please try again.");
-            userBuy();
-        }
+            
     })
   });
 }
