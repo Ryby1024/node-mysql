@@ -29,7 +29,7 @@ function userBuy() {
     inquirer.prompt([
         {
         name: "choice",
-        type: "list",
+        type: "rawlist",
         choices: function(){
             var choiceArray = [];
             for(let i = 0; i < results.length; i++ ){
@@ -37,7 +37,7 @@ function userBuy() {
             }
             return choiceArray;
         },
-        message: "What item would you like to purchase?"
+        message: "What is the item ID of the item you would like to purchase?"
     },
     {
         name: "quantity",
