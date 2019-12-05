@@ -18,7 +18,7 @@ connection.connect(function (err) {
     if (err) throw err;
     display();
     userBuy();
-    connection.end();
+
 });
 function display() {
     connection.query("SELECT * FROM products", function (err, results) {
@@ -28,7 +28,7 @@ function display() {
         console.log("--------------------")
 
         for (let i = 0; i < results.length; i++) {
-            console.log(results[i].item_id + " | " + results[i].product_name + " | " +"$" + results[i].price);
+            console.log(results[i].item_id + " | " + results[i].product_name + " | " + "$" + results[i].price);
         }
 
     })
@@ -66,7 +66,7 @@ function userBuy() {
                 }
 
             }
-            
+
             if (chosenItem.stock_quantity >= parseInt(answer.quantity)) {
                 connection.query(
                     "UPDATE products SET ? WHERE ?",
@@ -82,19 +82,17 @@ function userBuy() {
                     function (error) {
                         let totalAmount = chosenItem.price * answer.quantity;
                         if (error) throw err;
-                        console.log("Purchase was successful! Your total is " + totalAmount);
-                        display();
-                        userBuy();
-
-
+                        console.log("Purchase was successful! Your total is " + "$" + totalAmount);
+                        connection.end();
                     }
                 );
 
             } else {
-                console.log("Not enough supply. Please try again.");
-                display();
-                userBuy();
-            }
-        })
+            console.log("Not enough supply. Please try again.");
+            setTimeout(display, 2000);
+            setTimeout(userBuy, 4000);
+            };
+
+        });
     });
 }
