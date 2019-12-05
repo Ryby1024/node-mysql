@@ -28,7 +28,7 @@ function display() {
         console.log("--------------------")
 
         for (let i = 0; i < results.length; i++) {
-            console.log(results[i].item_id + " | " + results[i].product_name + " | " + results[i].price);
+            console.log(results[i].item_id + " | " + results[i].product_name + " | " +"$" + results[i].price);
         }
 
     })
@@ -58,7 +58,7 @@ function userBuy() {
                 message: "How many would you like to buy?"
             }
         ]).then(function (answer) {
-            var chosenItem;
+            let chosenItem;
             for (let i = 0; i < results.length; i++) {
                 if (results[i].item_id === parseInt(answer.choice)) {
                     chosenItem = results[i];
@@ -66,8 +66,8 @@ function userBuy() {
                 }
 
             }
-            var totalAmount = chosenItem.price * answer.quantity;
-            if (chosenItem.stock_quantity > parseInt(answer.quantity)) {
+            
+            if (chosenItem.stock_quantity >= parseInt(answer.quantity)) {
                 connection.query(
                     "UPDATE products SET ? WHERE ?",
                     [
@@ -80,8 +80,10 @@ function userBuy() {
 
                     ],
                     function (error) {
+                        let totalAmount = chosenItem.price * answer.quantity;
                         if (error) throw err;
                         console.log("Purchase was successful! Your total is " + totalAmount);
+                        display();
                         userBuy();
 
 
@@ -90,6 +92,7 @@ function userBuy() {
 
             } else {
                 console.log("Not enough supply. Please try again.");
+                display();
                 userBuy();
             }
         })
