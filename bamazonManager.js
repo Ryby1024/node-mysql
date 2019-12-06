@@ -94,7 +94,7 @@ function addInventory() {
                 choices: function () {
                     var choiceArray = [];
                     for (let i = 0; i < results.length; i++) {
-                        choiceArray.push(results[i].item_id.toString()+ " | " + results[i].product_name.toString()+ " | " + results[i].stock_quantity.toString());
+                        choiceArray.push(results[i].item_id.toString() + " | " + results[i].product_name.toString() + " | " + results[i].stock_quantity.toString());
                     }
                     return choiceArray;
                 },
@@ -105,32 +105,68 @@ function addInventory() {
                 type: "input",
                 message: "How many would you like to add?"
             }
-        ]).then(function(answer){
+        ]).then(function (answer) {
             let selectedItem;
-            for(let i = 0; i < results.length; i++){
-                if(results[i].item_id === parseInt(answer.choice)){
+            for (let i = 0; i < results.length; i++) {
+                if (results[i].item_id === parseInt(answer.choice)) {
                     selectedItem = results[i];
 
                     connection.query("UPDATE products SET ? WHERE ?",
-                    [
-                        {
-                            stock_quantity: selectedItem.stock_quantity + answer.quantity
-                        },
-                        {
-                            item_id: selectedItem.item_id
+                        [
+                            {
+                                stock_quantity: selectedItem.stock_quantity + answer.quantity
+                            },
+                            {
+                                item_id: selectedItem.item_id
+                            }
+                        ],
+                        function (error) {
+                            if (error) throw err;
+                            console.log("You have successfully added to the inventory.")
+                            setTimeout(runSearch, 3000);
                         }
-                    ],
-                    function(error){
-                        if(error) throw err;
-                        console.log("You have successfully added to the inventory.")
-                        runSearch();
-                    }
-                    
+
                     )
                 }
             }
 
-            
+
+        })
+    })
+}
+
+function addItem() {
+    connection.query("SELECT * FROM products", function (err, results) {
+        if (err) throw err;
+
+        inquirer.prompt([
+            {
+                name: "name",
+                type: "input",
+                message: "What is the name of the item you want to add to the database?"
+            },
+            {
+                name: "department",
+                type: "input",
+                message: "What department is this item in?"
+            },
+            {
+                name: "price",
+                type: "input",
+                message: "What is the price of the item?"
+            },
+            {
+                name: "quantity",
+                type: "input",
+                message: "How many of this item do you want to add to the inventory?"
+            }
+        ]).then(function(answer){
+            let sql = "INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (answer.name, answer.department, answer.price, answer.quantity)";
+            connection.query(sql, function(error, res){
+                if(error) throw err;
+                console.log("You have successfully added this item.")
+                runSearch();
+            })
         })
     })
 }
