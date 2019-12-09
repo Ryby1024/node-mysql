@@ -99,12 +99,27 @@ function addInventory() {
                     }
                     
                 },
-                message: "What is the item ID of the item you would like to add to the inventory?"
+                message: "What is the item ID of the item you would like to add to the inventory?",
+                validate: function(inputChoice){
+                    if(!isNaN(inputChoice)){
+                        return true;
+                    }
+                    console.log(" Please enter a valid Item ID")
+                    return false;
+                }
+               
             },
             {
                 name: "quantity",
-                type: "input",
-                message: "How many would you like to add?"
+                type: "number",
+                message: "How many would you like to add?",
+                validate: function(inputQuant){
+                    if(!isNaN(inputQuant)){
+                        return true;
+                    }
+                    console.log(" Please enter a valid quantity.")
+                    return false;
+                }
                 
             }
         ]).then(function (answer) {
@@ -155,13 +170,27 @@ function addItem() {
             },
             {
                 name: "price",
-                type: "input",
-                message: "What is the price of the item?"
+                type: "number",
+                message: "What is the price of the item?",
+                validate: function(inputPrice){
+                    if(!isNaN(inputPrice)){
+                        return true;
+                    }
+                    console.log(" Please enter a valid price");
+                    return false;
+                }
             },
             {
                 name: "quantity",
-                type: "input",
-                message: "How many of this item do you want to add to the inventory?"
+                type: "number",
+                message: "How many of this item do you want to add to the inventory?",
+                validate: function(inputQuantity){
+                    if(!isNaN(inputQuantity)){
+                        return true;
+                    }
+                    console.log(" Please enter a valid quantity");
+                    return false;
+                }
             }
         ]).then(function(answer){             
             connection.query("INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (?, ?, ?, ?)",[answer.name,answer.department,answer.price,answer.quantity], function(error, res){

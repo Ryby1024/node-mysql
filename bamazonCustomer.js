@@ -50,12 +50,27 @@ function userBuy() {
                     }
                     return choiceArray;
                 },
-                message: "What is the item ID of the item you would like to purchase?"
+                message: "What is the item ID of the item you would like to purchase?",
+                validate: function(userChoice){
+                    if(!isNaN(userChoice)){
+                        return true;
+                    }
+                    console.log(" Please enter a valid Item ID");
+                    return false;
+                }
+
             },
             {
                 name: "quantity",
                 type: "input",
-                message: "How many would you like to buy?"
+                message: "How many would you like to buy?",
+                validate: function(userQ){
+                    if(!isNaN(userQ)){
+                        return true;
+                    }
+                    console.log(" Please enter a valid quantity");
+                    return false;
+                }
             }
         ]).then(function (answer) {
             let chosenItem;
