@@ -70,15 +70,16 @@ function display() {
 }
 
 function lowInventory() {
-    var query = "SELECT stock_quantity FROM products WHERE stock_quantity < 5 ";
+    var query = "SELECT * FROM products";
     connection.query(query, function (err, results) {
         if (err) throw err;
-        console.log("--------------------");
-        console.log("ID | Product Name | Price | Quantity ");
-        console.log("--------------------")
+        
+        var resArr = [];
         for (let i = 0; i < results.length; i++) {
-            console.log(results[i].item_id + " | " + results[i].product_name + " | " + "$" + results[i].price + " | " + results[i].stock_quantity);
+            if(results[i].stock_quantity < 5)
+            resArr.push(results[i].item_id + " | " + results[i].product_name + " | " + "$" + results[i].price + " | " + results[i].stock_quantity);
         }
+        console.table(resArr);
         runSearch();
     })
 }
@@ -90,13 +91,13 @@ function addInventory() {
         inquirer.prompt([
             {
                 name: "choice",
-                type: "list",
+                type: "input",
                 choices: function () {
-                    var choiceArray = [];
+                    
                     for (let i = 0; i < results.length; i++) {
-                        choiceArray.push(results[i].item_id.toString() + " | " + results[i].product_name.toString() + " | " + results[i].stock_quantity.toString());
+                        console.log(results[i].item_id + " | " + results[i].product_name + " | " + results[i].stock_quantity)
                     }
-                    return choiceArray;
+                    
                 },
                 message: "What is the item ID of the item you would like to add to the inventory?"
             },
@@ -114,7 +115,7 @@ function addInventory() {
                     connection.query("UPDATE products SET ? WHERE ?",
                         [
                             {
-                                stock_quantity: selectedItem.stock_quantity + answer.quantity
+                                stock_quantity: parseInt(selectedItem.stock_quantity) + parseInt(answer.quantity)
                             },
                             {
                                 item_id: selectedItem.item_id
@@ -160,9 +161,8 @@ function addItem() {
                 type: "input",
                 message: "How many of this item do you want to add to the inventory?"
             }
-        ]).then(function(answer){
-            let sql = "INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (answer.name, answer.department, answer.price, answer.quantity)";
-            connection.query(sql, function(error, res){
+        ]).then(function(answer){             
+            connection.query("INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (?, ?, ?, ?)",[answer.product_name,answer.department.name,answer.price,answer.stock_quantity], function(error, res){
                 if(error) throw err;
                 console.log("You have successfully added this item.")
                 runSearch();

@@ -24,13 +24,13 @@ function display() {
     connection.query("SELECT * FROM products", function (err, results) {
         if (err) throw err;
         console.log("--------------------");
-        console.log("ID | Product Name | Price ");
+        console.log("ID | Product Name | Price | Quantity ");
         console.log("--------------------")
-
+        
         for (let i = 0; i < results.length; i++) {
             console.log(results[i].item_id + " | " + results[i].product_name + " | " + "$" + results[i].price);
         }
-
+        
     })
 }
 
