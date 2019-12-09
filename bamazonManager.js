@@ -105,6 +105,7 @@ function addInventory() {
                 name: "quantity",
                 type: "input",
                 message: "How many would you like to add?"
+                
             }
         ]).then(function (answer) {
             let selectedItem;
@@ -139,6 +140,7 @@ function addInventory() {
 function addItem() {
     connection.query("SELECT * FROM products", function (err, results) {
         if (err) throw err;
+        console.table(results);
 
         inquirer.prompt([
             {
@@ -162,7 +164,7 @@ function addItem() {
                 message: "How many of this item do you want to add to the inventory?"
             }
         ]).then(function(answer){             
-            connection.query("INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (?, ?, ?, ?)",[answer.product_name,answer.department.name,answer.price,answer.stock_quantity], function(error, res){
+            connection.query("INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (?, ?, ?, ?)",[answer.name,answer.department,answer.price,answer.quantity], function(error, res){
                 if(error) throw err;
                 console.log("You have successfully added this item.")
                 runSearch();
