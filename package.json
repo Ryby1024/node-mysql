@@ -1,0 +1,27 @@
+{
+  "name": "mysql",
+  "version": "1.0.0",
+  "description": "<p>In this assignment we were tasked with building a Bamazon app. This app allows users to preview items for sale or purchase an item from the list of available items that are stored in a mysql database we created. The second part of the assignment was to create some manager functions to all the manager to keep tabs on the \"business\".</p>",
+  "main": "bamazonCustomer.js",
+  "dependencies": {
+    "cli": "^1.0.1",
+    "cli-table": "^0.3.1",
+    "inquirer": "^7.0.0",
+    "mysql": "^2.17.1",
+    "table": "^5.4.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ryby1024/node-mysql.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ryby1024/node-mysql/issues"
+  },
+  "homepage": "https://github.com/Ryby1024/node-mysql#readme"
+}
